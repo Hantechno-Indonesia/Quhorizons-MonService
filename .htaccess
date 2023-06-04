@@ -1,0 +1,19 @@
+SetEnvIf Request_URI "^(.*)" PORT=5001
+
+RewriteEngine On
+RewriteBase /
+
+# CORS
+Header add Access-Control-Allow-Origin "*"
+
+# HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteCond %{ENV:HTTPS} !=on
+RewriteRule ^(.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# PORT
+RewriteCond %{SERVER_PORT} !^%{ENV:PORT}$
+RewriteRule ^(.*) https://%{HTTP_HOST}:%{ENV:PORT}%{REQUEST_URI} [L,R=301]
+
+# RPROXY
+# RewriteRule ^(.*) http://localhost:${ENV:PORT}/$1 [P]
